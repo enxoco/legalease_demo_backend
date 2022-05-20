@@ -32,19 +32,17 @@ router.get('/:term', async function(req, res, next) {
         // Grab just the plain text content
 		const content = await page.content();
         
-        console.log('content', content)
-        // Create our regular expression using our search term
-        // and make sure it is case-insensitive
-
         /**
+         * Create our regEx using our search term
+         * and make sure it is case-insensitive
          * Maybe need to create another regex or do a 
          * string replace to strip out dots and other
          * special characters.
          */
-        const re = new RegExp(term.replace, 'ig')
+        const re = new RegExp(term, 'ig')
 
         // Get the number of times this term shows up on the page
-        const resultsCount = content.match(re).length
+        const resultsCount = content.match(re).length || 0
 
         //Try to save our entry in the database
         const savedQuery = await wikipediaQueries.create({query: term, resultsCount})
@@ -63,10 +61,10 @@ router.get('/:term', async function(req, res, next) {
 /* POST wikipedia query */
 router.post('/', async function(req, res, next) {
     try {
-        console.log('req', req.body)
       res.json(await wikipediaQueries.create(req.body));
     } catch (err) {
       console.error(`Error while creating wikipedia query`, err.message);
+      res.json(err.message)
       next(err);
     }
   });
