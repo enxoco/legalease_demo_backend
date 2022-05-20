@@ -22,7 +22,8 @@ async function getMultiple(page = 1){
   }
 }
 
-async function create(wikipediaQuery){
+
+  async function create(wikipediaQuery){
     const {query, resultsCount} = wikipediaQuery
     const result = await db.query(`INSERT INTO Searches (query, resultsCount) VALUES ("${query}", "${resultsCount}");`);
   
@@ -35,7 +36,22 @@ async function create(wikipediaQuery){
     return {message};
   }
 
+  async function handleDelete(id){
+    const result = await db.query(`DELETE FROM Searches WHERE id = "${id}"`);
+    console.log('result', result)
+  
+    let message = 'Error in deleting wikipedia query';
+  
+    if (result.affectedRows) {
+      message = 'Wikipedia query deleted successfully';
+    }
+  
+    return {message};
+  }
+
+
 module.exports = {
   getMultiple,
-  create
+  create,
+  handleDelete
 }
