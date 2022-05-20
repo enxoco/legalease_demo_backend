@@ -74,6 +74,7 @@ router.get('/:term', async function(req, res, next) {
         } else {
             res.json(savedQuery)
         }
+        res.end()
 	} catch (error) {
     /**
      * If we get an error, it most likely meeans that the requested page
@@ -82,6 +83,7 @@ router.get('/:term', async function(req, res, next) {
     const savedQuery = await wikipediaQueries.create({query: req.params.term, resultsCount: 0})
 
     res.json({query: req.params.term, results: 0, status: savedQuery.message})
+    res.end()
 	}
 })
 

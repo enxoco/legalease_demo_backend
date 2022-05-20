@@ -9,6 +9,25 @@ async function getMultiple(page = 1){
   );
   const data = helper.emptyOrRows(rows);
 
+  /**
+   * If we don't have any entries for this page
+   * then invoke our recursive function to go back
+   * one page at a time until we find results.
+   */
+  if (data.length == 0) {
+    const results = await helper.findPreviousPage((page - 1), data)
+    const meta = {
+      prevPage: ((+results.page - 1) >= 1) ? (+results.page - 1) : null ,
+      page: +results.page,
+      nextPage: (results.data.length > config.listPerPage) ? +results.page + 1 : null
+    };
+
+    return {
+      data: results.data,
+      meta
+    }
+  }
+
   // Add previous and next positions for pagination
   const meta = {
       prevPage: ((+page - 1) >= 1) ? (+page - 1) : null ,
